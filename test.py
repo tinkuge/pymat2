@@ -15,7 +15,10 @@ def doTest(module):
 
     doLog("Creating Matlab object instance. Raises a Warning on Windows.")
     _obj = module.Matlab("Something")
-    doLog("Pymat version is %r" % _obj.version)
+    _desiredVersion = file("pymat2.version").read().strip()
+    check("Pymat current version (%s) is %s" % (_obj.version, _desiredVersion),
+        lambda: _obj.version == _desiredVersion
+    )
     check(
         "Matlab must be not running now.",
         lambda: _obj.running == False

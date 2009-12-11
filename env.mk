@@ -1,5 +1,7 @@
 OS := $(shell eval 'uname | tr "[:upper:]" "[:lower:]" | tr -c -d "[:lower:]"')
 PYTHON ?= python
+THISFILE_DIR__ = $(dir $(lastword $(MAKEFILE_LIST)))
+PYMAT2_VERSION = $(shell cat "$(THISFILE_DIR__)/pymat2.version")
 
 ifeq ($(OS),cygwinnt)
 # assume running Windows

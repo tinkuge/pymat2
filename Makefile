@@ -12,10 +12,31 @@ dist: clean
 	$(MAKE) test
 	mkdir -p ./dist/pymat2
 	cp ./src/*.{py,pyd} ./dist/pymat2
-	cd ./dist && (zip -r ./pymat2_py26.zip ./pymat2)
+	cp setup.py ./dist
+	zip -r ./dist/pymat2_$(PYMAT2_VERSION)_py26.zip \
+		./dist/pymat2 ./dist/setup.py
+
+windist: dist
+	cd ./dist && (\
+		$(PYTHON) setup.py bdist_wininst && \
+		mv ./dist/*.exe . && \
+		for fname in $$(ls *.exe) ; do \
+			mv \
+				$${fname} \
+				$$(echo $${fname} | sed 's/\(.exe\)/_py26\1/g'); \
+		done ; \
+		rm -r ./dist \
+	)
 
 clean:
 	$(MAKE) -C src clean
 	if [ -e ./dist ] ; then rm -rf ./dist; fi
 
-all: pymat
+release_packages:
+ifeq ($(OS),cygwinnt)
+	$(MAKE) windist
+else
+	# TODO: add other OSes
+endif
+
+all: pymat2

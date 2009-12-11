@@ -10,8 +10,6 @@
   Version 1.1 -- January 18, 2003, Axel Kowald (kowald@molgen.mpg.de)
      * Modified for Matlab 6.5 and Python 2.2
 */
-#define PYMAT_VERSION "2.0"
-
 #include "pymat_head.h"
 #include "exceptions.h"
 #include "matlab.h"
