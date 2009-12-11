@@ -13,7 +13,7 @@ dist: clean
 	mkdir -p ./dist/pymat2
 	cp ./src/*.{py,pyd} ./dist/pymat2
 	cp setup.py ./dist
-	zip -r ./dist/pymat2_$(PYMAT2_VERSION)_py26.zip \
+	zip -r ./dist/pymat2_$(PYMAT2_VERSION)_win32_py26.zip \
 		./dist/pymat2 ./dist/setup.py
 
 windist: dist
