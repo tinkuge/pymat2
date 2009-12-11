@@ -3,7 +3,7 @@ import re
 import warnings
 
 from . import (
-    _pymat,
+    _pymat2,
     exceptions,
 )
 
@@ -12,7 +12,8 @@ class Matlab(object):
 
     _pymatMatlab = None
 
-    version = _pymat.__version__
+    version = property(
+        lambda s: _pymat2.__version__)
     running = property(
         lambda s: s._pymatMatlab and s._pymatMatlab.isRunning())
     outputBufferSize = property(
@@ -35,7 +36,7 @@ class Matlab(object):
                  exceptions.MatlabWarning
             )
             arg = None
-        self._pymatMatlab = _pymat.Matlab(arg)
+        self._pymatMatlab = _pymat2.Matlab(arg)
 
     def start(self):
         """Start Matlab instance.

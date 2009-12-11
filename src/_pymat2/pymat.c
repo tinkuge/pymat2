@@ -21,7 +21,7 @@ static PyMethodDef PymatMethods[] = {
 	{ 0}
 };
 
-PyMODINIT_FUNC init_pymat(void)
+PyMODINIT_FUNC init_pymat2(void)
 {
     PyObject *module = Py_InitModule(PY_MODULE_NAME, PymatMethods);
 

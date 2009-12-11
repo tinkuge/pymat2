@@ -23,7 +23,7 @@
 #define min(x,y) ((x) < (y) ? (x) : (y))
 #endif
 
-#define PY_MODULE_NAME	"_pymat"
+#define PY_MODULE_NAME	"_pymat2"
 
 #define _STR(x) #x
 #define STR(x) _STR(x)

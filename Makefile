@@ -1,14 +1,14 @@
 include env.mk
 
-pymat:
-	$(MAKE) -C src pymat
+pymat2:
+	$(MAKE) -C src pymat2
 
-test: pymat
+test: pymat2
 	$(PYTHON) test.py
 
 
 dist: clean
-	$(MAKE) pymat
+	$(MAKE) pymat2
 	$(MAKE) test
 	mkdir -p ./dist/pymat2
 	cp ./src/*.{py,pyd} ./dist/pymat2

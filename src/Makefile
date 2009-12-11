@@ -1,14 +1,11 @@
 include ../env.mk
 
-_pymat.pyd:
-	$(MAKE) -C _pymat _pymat.pyd
-	cp ./_pymat/_pymat.pyd .
+_pymat2.pyd:
+	$(MAKE) -C _pymat2 _pymat2.pyd
+	cp ./_pymat2/_pymat2.pyd .
 
-pymat: _pymat.pyd
+pymat2: _pymat2.pyd
 
 clean:
-	$(MAKE) -C _pymat clean
+	$(MAKE) -C _pymat2 clean
 	$(RM) *.pyc *.pyd
-
-pymat: _pymat
-	@echo "here"
