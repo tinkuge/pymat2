@@ -23,6 +23,8 @@ enum {
 	PYMAT_ERR_MATLAB,
 };
 
+static PyObject* pymat_exception_dict;
+
 PyObject* raise_pymat_error_with_value(const int, const char*, const int);
 PyObject* raise_pymat_error(const int errorId, const char* msg);
 PyObject* not_implemented(void);

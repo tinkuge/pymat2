@@ -62,7 +62,8 @@ PyObject* not_implemented(void) {
 void init_pymat_exceptions(PyObject *module){
 	/* Add error code constants to module */
 	for(int ii=0; ii < get_pymat_error_count(); ii++){
-		PyModule_AddIntConstant(module, get_pymat_error_string_for_code(ii), ii);
+		PyModule_AddIntConstant(
+			module, get_pymat_error_string_for_code(ii), ii);
 	}
 
 	/* Add pymat exception object */
@@ -70,6 +71,20 @@ void init_pymat_exceptions(PyObject *module){
 	if (PymatError == NULL) return;
 	Py_INCREF(PymatError);
 	PyModule_AddObject(module, "PymatError", PymatError);
+
+	/* Create dictionary with all possible pymat error codes */
+	pymat_exception_dict = PyDict_New();
+	for(int ii=0; ii < get_pymat_error_count(); ii++){
+		PyDict_SetItem(pymat_exception_dict,
+			PyString_FromString(pymat_error_strings[ii]),
+			PyInt_FromLong(ii)
+		);
+		PyDict_SetItem(pymat_exception_dict,
+			PyInt_FromLong(ii),
+			PyString_FromString(pymat_error_strings[ii])
+		);
+	}
+	PyModule_AddObject(module, "PymatErrorCodes", pymat_exception_dict);
 }
 
 PyObject* not_implemented_msg(const char* msg) {
