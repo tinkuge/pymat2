@@ -42,15 +42,15 @@ def doTest(module):
     )
     check(
         "Checking plain eval.",
-        lambda: _obj.plainEval("x=1+1; y=x+1; y") == "\ny =\n\n     3\n\n"
+        lambda: _obj.eval("x=1+1; y=x+1; y") == "\ny =\n\n     3\n\n"
     )
     check(
         "Checking fancy eval with default mapping.",
-        lambda: _obj.eval("x=1+1; y=x+1; y") == {"y": "3"}
+        lambda: _obj.evalAndParse("x=1+1; y=x+1; y") == {"y": "3"}
     )
     check(
         "Checking fancy eval with default mapping. With 3 vars.",
-        lambda: _obj.eval("x=1+1; y=x+1; z=x+y; x, y, z") \
+        lambda: _obj.evalAndParse("x=1+1; y=x+1; z=x+y; x, y, z") \
             == {"x": "2", "y": "3", "z": "5"}
     )
     check(

@@ -61,7 +61,7 @@ class Matlab(object):
         """Restart Matlab."""
         return self.stop() and self.start()
 
-    def plainEval(self, cmd):
+    def eval(self, cmd):
         """Do a plain eval of given string in matlab.
 
         Does not perform fancy result parsing, etc.
@@ -85,7 +85,7 @@ class Matlab(object):
         return _out
 
     _returnValueRe = re.compile(r"^\s*(\w+)\s*=\s*((?:[0-9.eE+-]+\s*)+)", re.M)
-    def eval(self, msg):
+    def evalAndParse(self, msg):
         """Eval given string and parse result.
 
         This eval() only parses and extracts variable names
@@ -93,7 +93,7 @@ class Matlab(object):
 
         """
         _out = {}
-        _rv = self.plainEval(msg)
+        _rv = self.eval(msg)
         if _rv.startswith("???"):
             raise exceptions.MatlabEvalError(
                 "Eval(%r) error. Matlab answer:\n%s" % 
@@ -115,7 +115,7 @@ class Matlab(object):
 
         """
         return dict((_name, parser(_value))
-            for (_name, _value) in self.eval(cmd).iteritems()
+            for (_name, _value) in self.evalAndParse(cmd).iteritems()
         )
 
     def getArray(self, name):
