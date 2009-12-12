@@ -68,7 +68,7 @@ PyObject* Matlab_put_array(MatlabObject *self, PyObject *args){
 			PYMAT_ERR_MATLAB, "Unable to put matrix into MATLAB workspace");
     }
 
-    //mxDestroyArray(lArray);
+    mxDestroyArray(lArray);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -176,9 +176,10 @@ PyDoc_STRVAR(Matlab_stop_doc,
 "Start Matlab engine process.");
 static PyObject *Matlab_stop(MatlabObject *self){
 	_MATLAB_MUST_BE_RUNNING;
-	if(!engClose(self->matlab_engine)){
+	if(engClose(self->matlab_engine)){
 		return raise_pymat_error(PYMAT_ERR_MATLAB_ENGINE_STOP, "Matlab engine closing error.");
 	}
+	self->matlab_engine = NULL;
 	Py_RETURN_NONE;
 }
 
