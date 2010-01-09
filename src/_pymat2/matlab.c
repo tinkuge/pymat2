@@ -17,6 +17,7 @@ typedef struct {
 	PyObject_HEAD;
 	char *start_command;
 	Engine *matlab_engine;
+	int matlab_engine_return_status;
 
 	char *matlab_engine_output_buffer;
 	int matlab_engine_output_buffer_len;
@@ -189,7 +190,20 @@ static PyObject *Matlab_start(MatlabObject *self){
 	if(self->matlab_engine){
 		return raise_pymat_error(PYMAT_ERR_MATLAB_ENGINE_STARTED, "Matlab engine is already started.");
 	}
+	/* 
+	   Creating separate MATLAB instance for each process
+	   is safer.
+
+	   *nix users are out of luck, as usual.
+	 */
+#ifdef WIN32
+	self->matlab_engine = engOpenSingleUse(
+		self->start_command, NULL, 
+		&(self->matlab_engine_return_status)
+	);
+#else
 	self->matlab_engine = engOpen(self->start_command);
+#endif
 	if(!self->matlab_engine){
 		return raise_pymat_error(PYMAT_ERR_MATLAB_ENGINE_START, "Failed to start Matlab Engine");
 	}

@@ -77,6 +77,10 @@ def doTest(module):
         "Checking get array.",
         _getArrayCheck
     )
+    check(
+        "Checking .stop()",
+        lambda: _obj.stop() == True # I want to be obvious here.
+    )
     doLog("Test ended.")
 
 if __name__ == "__main__":

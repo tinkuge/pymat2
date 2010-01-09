@@ -1,0 +1,9 @@
+glob:*.obj
+glob:*.idb
+glob:*.pyc
+glob:*.pyd
+glob:*.zip
+glob:*.lib
+glob:*.exe
+glob:*.exp
+glob:dist/*
