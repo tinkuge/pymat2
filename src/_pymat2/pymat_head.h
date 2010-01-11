@@ -24,7 +24,7 @@
 #endif
 
 #define PY_MODULE_NAME	"_pymat2"
-#define PYMAT_VERSION "0.0.4"
+#define PYMAT_VERSION "0.0.5"
 
 #define _STR(x) #x
 #define STR(x) _STR(x)

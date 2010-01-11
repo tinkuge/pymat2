@@ -12,3 +12,6 @@ class ResiultParsingError(MatlabError):
 
 class MatlabEvalError(MatlabError):
     """Risen when matlab eval() returns an error."""
+
+class MatlabStartupError(MatlabError):
+    """Risen when matlab engine failes to start."""

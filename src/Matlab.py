@@ -2,6 +2,8 @@ import os
 import re
 import warnings
 
+import time
+
 from . import (
     _pymat2,
     exceptions,
@@ -59,7 +61,34 @@ class Matlab(object):
 
     def restart(self):
         """Restart Matlab."""
-        return self.stop() and self.start()
+        # This is a dirty hack, someone should
+        # propose something better
+        _rv = self.stop()
+        if _rv:
+            # Attempt to start Matlab 15 times,
+            # give up afterwards
+            _rv = False
+            for _attempt in xrange(15):
+                try:
+                    _rv = self.start()
+                except _pymat2.PymatError, _err:
+                    if _err[0] == _pymat2.PymatErrorCodes["PYMAT_ERR_MATLAB_ENGINE_START"]:
+                        # Engine start failure - suppress it
+                        # and probably attempt to start it after
+                        # some delay
+                        time.sleep(1)
+                        pass
+                    else:
+                        # Unexpected error
+                        raise
+                else:
+                    break
+            else:
+                # "for" loop didn't end with "break" call
+                # engine startup failed for sure.
+                raise exceptions.MatlabStartupError(
+                    "All attempts to bring engine back failed.")
+        return _rv
 
     def eval(self, cmd):
         """Do a plain eval of given string in matlab.

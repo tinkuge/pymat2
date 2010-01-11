@@ -13,6 +13,14 @@ Takes single argument (named 'startCmd') on *nix operationg systems,\n\
 Does not take any arguments on Windows.\n\
 ");
 
+/* 
+   Dummy return status to be set in 'matlab return status'
+   structure when engine is started.
+
+   Actual value of constant determined by fair "random.randint(0, 2048)"
+   call in Python interpreter.
+*/
+#define NO_MATLAB_RETURN_STATUS		1946
 typedef struct {
 	PyObject_HEAD;
 	char *start_command;
@@ -180,6 +188,13 @@ static PyObject *Matlab_stop(MatlabObject *self){
 	if(engClose(self->matlab_engine)){
 		return raise_pymat_error(PYMAT_ERR_MATLAB_ENGINE_STOP, "Matlab engine closing error.");
 	}
+#if WIN32
+	assert(NO_MATLAB_RETURN_STATUS > 0);
+	while(self->matlab_engine_return_status == NO_MATLAB_RETURN_STATUS){
+		/* In Windows "Sleep" has delay parameter measured in msec. */
+		Sleep(100);
+	}
+#endif
 	self->matlab_engine = NULL;
 	Py_RETURN_NONE;
 }
@@ -201,6 +216,7 @@ static PyObject *Matlab_start(MatlabObject *self){
 		self->start_command, NULL, 
 		&(self->matlab_engine_return_status)
 	);
+	self->matlab_engine_return_status = NO_MATLAB_RETURN_STATUS;
 #else
 	self->matlab_engine = engOpen(self->start_command);
 #endif
@@ -289,6 +305,8 @@ static PyMemberDef Matlab_members[] = {
 		RO, "Start command used to start given Matlab instance"},
 	{"outputBufferSize", T_INT, offsetof(MatlabObject, matlab_engine_output_buffer_len),
 		RO, "Currently set output buffer size"},
+	{"engineReturnStatus", T_INT, offsetof(MatlabObject, matlab_engine_return_status),
+		RO, "Matlab object return status."},
 	{NULL}
 };
 
