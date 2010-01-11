@@ -169,3 +169,8 @@ class Matlab(object):
                 "Matlab process not started")
         return self._pymatMatlab.putArray(name, value)
 
+    def __del__(self):
+        """Gracefully close Matlab session on object deletion."""
+        _matlabObject = self._pymatMatlab
+        if _matlabObject and _matlabObject.isRunning():
+            _matlabObject.stop()
