@@ -84,5 +84,5 @@ def doTest(module):
     doLog("Test ended.")
 
 if __name__ == "__main__":
-    import src as pymat
-    doTest(pymat)
+    import pymat2
+    doTest(pymat2)
