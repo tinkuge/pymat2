@@ -24,7 +24,14 @@
 #endif
 
 #define PY_MODULE_NAME	"_pymat2"
-#define PYMAT_VERSION "0.0.5"
+
+/*
+ * Usually PYMAT_VERSION is provided by distutils
+ * (aka its provided by setup.py)
+ */
+#ifndef PYMAT_VERSION
+# define PYMAT_VERSION "UNKNOWN_PYMAT_VERSION"
+#endif
 
 #define _STR(x) #x
 #define STR(x) _STR(x)
