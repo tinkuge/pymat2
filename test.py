@@ -1,3 +1,5 @@
+import re
+
 from numpy import *
 
 def doLog(msg):
@@ -14,7 +16,7 @@ def doTest(module):
     doLog("Starting test of %s..." % module)
 
     doLog("Creating Matlab object instance. Raises a Warning on Windows.")
-    _obj = module.Matlab("Something")
+    _obj = module.Matlab("matlab")
     _desiredVersion = file("pymat2.version").read().strip()
     check("Pymat current version (%s) is %s" % (_obj.version, _desiredVersion),
         lambda: _obj.version == _desiredVersion
@@ -42,7 +44,7 @@ def doTest(module):
     )
     check(
         "Checking plain eval.",
-        lambda: _obj.eval("x=1+1; y=x+1; y") == "\ny =\n\n     3\n\n"
+        lambda: re.match("^(>>)?\s+y =\n\n     3\n\n$", _obj.eval("x=1+1; y=x+1; y"), re.M)
     )
     check(
         "Checking fancy eval with default mapping.",
