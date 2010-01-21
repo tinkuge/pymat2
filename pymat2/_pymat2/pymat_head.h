@@ -29,6 +29,12 @@
 #define _STR(x) #x
 #define STR(x) _STR(x)
 
+#ifdef __GNUC__
+# define DONT_COMPLAIN_THAT_VARIABLE_IS_NOT_USED __attribute__ ((unused))
+#else
+# define DONT_COMPLAIN_THAT_VARIABLE_IS_NOT_USED
+#endif
+
 
 /* 
 * I know that it is evil, but it is simpliest of all hacks
@@ -37,7 +43,7 @@
 * If you have any proposals on how to remove this thing,
 * notify me please.
 */
-static int pyarray_works(void){
+static DONT_COMPLAIN_THAT_VARIABLE_IS_NOT_USED int pyarray_works(void){
 	int is_ok;
 	if(!PyArray_API){
 		is_ok = (_import_array() >= 0);

@@ -113,7 +113,7 @@ class Matlab(object):
             _out = mapType(_lines[0][0])
         return _out
 
-    _returnValueRe = re.compile(r"^\s*(\w+)\s*=\s*((?:[0-9.eE+-]+\s*)+)", re.M)
+    _returnValueRe = re.compile(r"^(?:>>\s*)?\s*(\w+)\s*=\s*((?:[0-9.eE+-]+\s*)+)", re.M)
     def evalAndParse(self, msg):
         """Eval given string and parse result.
 

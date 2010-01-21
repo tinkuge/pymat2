@@ -4,7 +4,7 @@
 
 #include "pymat_head.h"
 
-static PyObject *PymatError;
+static DONT_COMPLAIN_THAT_VARIABLE_IS_NOT_USED PyObject *PymatError;
 
 /* List of possible errors */
 enum { 
@@ -23,7 +23,7 @@ enum {
 	PYMAT_ERR_MATLAB,
 };
 
-static PyObject* pymat_exception_dict;
+static DONT_COMPLAIN_THAT_VARIABLE_IS_NOT_USED PyObject* pymat_exception_dict;
 
 PyObject* raise_pymat_error_with_value(const int, const char*, const int);
 PyObject* raise_pymat_error(const int errorId, const char* msg);
