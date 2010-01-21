@@ -4,12 +4,9 @@ OS := $(shell eval 'uname | tr "[:upper:]" "[:lower:]" | tr -c -d "[:lower:]"')
 
 
 all:
-	echo $(OS)
 ifeq ($(OS), cygwinnt)
-	echo 1
 	$(MAKE) windist
 else
-	echo 2
 	$(MAKE) unixdist
 endif
 
@@ -25,5 +22,9 @@ windist: test
 unixdist: test
 	python setup.py bdist
 
-build:
+build: clean
 	python setup.py build
+
+clean:
+	if [ -e ./dist ] ; then rm -r ./dist; fi
+	if [ -e ./build ] ; then rm -r ./build; fi

@@ -25,16 +25,19 @@
 
 #define PY_MODULE_NAME	"_pymat2"
 
-/*
- * Usually PYMAT_VERSION is provided by distutils
- * (aka its provided by setup.py)
- */
-#ifndef PYMAT_VERSION
-# define PYMAT_VERSION "UNKNOWN_PYMAT_VERSION"
-#endif
-
 #define _STR(x) #x
 #define STR(x) _STR(x)
+
+/*
+ * Usually DISTUTILS_PYMAT_VERSION is provided by distutils
+ * (aka its provided by setup.py)
+ */
+#ifndef DISTUTILS_PYMAT_VERSION
+# define PYMAT_VERSION "UNKNOWN_PYMAT_VERSION"
+#else
+# define PYMAT_VERSION STR(DISTUTILS_PYMAT_VERSION)
+#endif
+
 
 #ifdef __GNUC__
 # define DONT_COMPLAIN_THAT_VARIABLE_IS_NOT_USED __attribute__ ((unused))
