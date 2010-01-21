@@ -255,7 +255,7 @@ static PyObject* Matlab_new(PyTypeObject *type, PyObject *args, PyObject *kwds) 
 }
 
 static int Matlab_init(MatlabObject *self, PyObject *args, PyObject *kwds) {
-	char *kwlist[] = {"startCmd", NULL};
+	char *kwlist[] = {(char*)"startCmd", NULL};
 	int rc;
 
 	char *startCmd = NULL;
@@ -301,12 +301,12 @@ static PyMethodDef Matlab_methods[] = {
 };
 
 static PyMemberDef Matlab_members[] = {
-	{"startCommand", T_STRING, offsetof(MatlabObject, start_command), 
-		RO, "Start command used to start given Matlab instance"},
-	{"outputBufferSize", T_INT, offsetof(MatlabObject, matlab_engine_output_buffer_len),
-		RO, "Currently set output buffer size"},
-	{"engineReturnStatus", T_INT, offsetof(MatlabObject, matlab_engine_return_status),
-		RO, "Matlab object return status."},
+	{(char*)"startCommand", T_STRING, offsetof(MatlabObject, start_command), 
+		RO, (char*)"Start command used to start given Matlab instance"},
+	{(char*)"outputBufferSize", T_INT, offsetof(MatlabObject, matlab_engine_output_buffer_len),
+		RO, (char*)"Currently set output buffer size"},
+	{(char*)"engineReturnStatus", T_INT, offsetof(MatlabObject, matlab_engine_return_status),
+		RO, (char*)"Matlab object return status."},
 	{NULL}
 };
 

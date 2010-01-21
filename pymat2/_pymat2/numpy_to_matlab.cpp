@@ -3,7 +3,7 @@
 
 
 template <class T>
-void copyNumeric2Mx(T *pSrc, int pRows, int pCols, double *pDst, int *pStrides)
+void copyNumeric2Mx(T *pSrc, int pRows, int pCols, double *pDst, npy_intp *pStrides)
 {
     int lRowDelta = pStrides[1]/sizeof(T);
     int lColDelta = pStrides[0]/sizeof(T);
@@ -17,7 +17,7 @@ void copyNumeric2Mx(T *pSrc, int pRows, int pCols, double *pDst, int *pStrides)
 }
 
 template <class T>
-void copyCplxNumeric2Mx(T *pSrc, int pRows, int pCols, double *pRData, double *pIData, int *pStrides)
+void copyCplxNumeric2Mx(T *pSrc, int pRows, int pCols, double *pRData, double *pIData, npy_intp *pStrides)
 {
     int lRowDelta = pStrides[1]/sizeof(T);
     int lColDelta = pStrides[0]/sizeof(T);
@@ -168,10 +168,9 @@ mxArray* numeric2mx(const PyObject *pSrc)
 
 
 	if(!pyarray_works()){
-		raise_pymat_error_with_value(
+		raise_pymat_error(
 			PYMAT_ERR_NUMPY, 
-			"Unable to perform this function without NumPy installed",
-			(int)PyArray_API
+			"Unable to perform this function without NumPy installed"
 		);
 		return NULL;
 	}

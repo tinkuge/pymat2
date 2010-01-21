@@ -6,4 +6,6 @@ glob:*.zip
 glob:*.lib
 glob:*.exe
 glob:*.exp
+glob:build
+glob:dist
 glob:dist/*

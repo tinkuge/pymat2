@@ -48,9 +48,9 @@ PyObject* mx2numeric(const mxArray *pArray)
 			"Only 1-D and 2-D arrays are currently supported");
     }
 
-    dims = mxGetDimensions(pArray);
+    dims = (const int*)mxGetDimensions(pArray);
 
-    if (nd == 2 && dims[0] == 1 || dims[1] == 1) {
+    if (nd == 2 && (dims[0] == 1 || dims[1] == 1)) {
         // It's really 1-D
         lMyDim = max(dims[0], dims[1]);
         dims = & lMyDim;
@@ -58,7 +58,7 @@ PyObject* mx2numeric(const mxArray *pArray)
     }
 
     lRetval = (PyArrayObject *)PyArray_SimpleNew(
-		nd, const_cast<int *>(dims), 
+		nd, (npy_intp*)dims, 
         mxIsComplex(pArray) ? PyArray_CDOUBLE : PyArray_DOUBLE
 	);
     if (!lRetval) Py_RETURN_NONE;

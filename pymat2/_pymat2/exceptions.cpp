@@ -3,7 +3,7 @@
 #include "exceptions.h"
 
 /* XXX: Message order in this array MUST follow order of enums in exceptions.h*/
-char *pymat_error_strings[] = {
+const char *pymat_error_strings[] = {
 	"PYMAT_ERR_UNKNOWN",
 	"PYMAT_ERR_WRONG_INIT_ARGUMENT",
 	"PYMAT_ERR_MATLAB_ENGINE_START",
@@ -67,7 +67,7 @@ void init_pymat_exceptions(PyObject *module){
 	}
 
 	/* Add pymat exception object */
-	PymatError = PyErr_NewException(PY_MODULE_NAME ".PymatError", NULL, NULL);
+	PymatError = PyErr_NewException((char*)PY_MODULE_NAME ".PymatError", NULL, NULL);
 	if (PymatError == NULL) return;
 	Py_INCREF(PymatError);
 	PyModule_AddObject(module, "PymatError", PymatError);

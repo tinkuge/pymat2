@@ -7,4 +7,4 @@
 PyObject* mx2char(const mxArray *);
 PyObject* mx2numeric(const mxArray *);
 
-#endif __MATLAB_TO_NUPY_INCLUDED__
+#endif /* __MATLAB_TO_NUPY_INCLUDED__ */

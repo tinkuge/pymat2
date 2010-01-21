@@ -24,10 +24,23 @@
 #endif
 
 #define PY_MODULE_NAME	"_pymat2"
-#define PYMAT_VERSION "0.0.5"
+
+/*
+ * Usually PYMAT_VERSION is provided by distutils
+ * (aka its provided by setup.py)
+ */
+#ifndef PYMAT_VERSION
+# define PYMAT_VERSION "UNKNOWN_PYMAT_VERSION"
+#endif
 
 #define _STR(x) #x
 #define STR(x) _STR(x)
+
+#ifdef __GNUC__
+# define DONT_COMPLAIN_THAT_VARIABLE_IS_NOT_USED __attribute__ ((unused))
+#else
+# define DONT_COMPLAIN_THAT_VARIABLE_IS_NOT_USED
+#endif
 
 
 /* 
@@ -37,7 +50,7 @@
 * If you have any proposals on how to remove this thing,
 * notify me please.
 */
-static int pyarray_works(void){
+static DONT_COMPLAIN_THAT_VARIABLE_IS_NOT_USED int pyarray_works(void){
 	int is_ok;
 	if(!PyArray_API){
 		is_ok = (_import_array() >= 0);
