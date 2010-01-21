@@ -1,9 +1,16 @@
 #include "numpy_to_matlab.h"
 #include "exceptions.h"
 
+/* this STRIDES_TYPE is required only for copyNumeric2Mx function */
+#ifdef WIN32
+# define STRIDES_TYPE int
+#else
+# define STRIDES_TYPE npy_intp
+#endif
 
 template <class T>
-void copyNumeric2Mx(T *pSrc, int pRows, int pCols, double *pDst, npy_intp *pStrides)
+void copyNumeric2Mx(T *pSrc, int pRows, int pCols,
+	double *pDst, STRIDES_TYPE *pStrides)
 {
     int lRowDelta = pStrides[1]/sizeof(T);
     int lColDelta = pStrides[0]/sizeof(T);

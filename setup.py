@@ -20,6 +20,7 @@ setup(
             sources=setup_env.compilable_sources,
             include_dirs=[
                 setup_env.MATLAB_INCLUDE_DIR,
+                setup_env.numpy_include,
             ],
             library_dirs=[
                 setup_env.MATLAB_LIB_DIR,
@@ -27,7 +28,7 @@ setup(
             define_macros=[
                 ("PYMAT_VERSION", '"%s"' % setup_env.version),
             ],
-            extra_link_args=["-lmx", "-leng"],
+            extra_link_args=setup_env.extra_link_args,
         ),
     ],
 )

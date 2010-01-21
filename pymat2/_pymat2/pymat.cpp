@@ -24,7 +24,7 @@ PyMODINIT_FUNC init_pymat2(void)
     PyObject *module = Py_InitModule(PY_MODULE_NAME, PymatMethods);
 
 	/* Add __version__ field to module */
-	PyModule_AddStringConstant(module, "__version__", PYMAT_VERSION);
+	PyModule_AddStringConstant(module, "__version__", STR(PYMAT_VERSION));
 	init_pymat_exceptions(module);
 	init_pymat_matlab(module);
 }
