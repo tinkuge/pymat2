@@ -156,7 +156,11 @@ class Matlab(object):
         if not self.running:
             raise exceptions.MatlabBackendStateError(
                 "Matlab process not started")
-        return self._pymatMatlab.getArray(name)
+        _rv = self._pymatMatlab.getArray(name)
+        if len(_rv) == 1:
+            # Array is really 1-D
+            _rv = _rv[0]
+        return _rv
 
     def putArray(self, name, value):
         """Put given array from Matlab.

@@ -1,5 +1,6 @@
 #include "matlab_to_numpy.h"
-#include "numpy_to_matlab.h"
+
+#include "matrix.h"
 #include "exceptions.h"
 
 PyObject* mx2char(const mxArray *pArray)
@@ -26,64 +27,106 @@ PyObject* mx2char(const mxArray *pArray)
     return lRetval;
 }
 
+int go_next_coord(npy_intp* coords, PyArrayObject* controlled){
+	int ii, n_dims, rv;
+
+	n_dims = PyArray_NDIM(controlled);
+	rv = 0;
+
+	for(ii = 0; ii < n_dims; ii++){
+		if(coords[ii] >= PyArray_DIM(controlled, ii) - 1){
+			coords[ii] = 0;
+		}
+		else
+		{
+			coords[ii] ++;
+			rv = 1;
+			break;
+		}
+	}
+	return rv;
+}
+
+void copy_mx_to_numpy(const mxArray *inArray, PyArrayObject* outArray){
+	// XXX: array dimensions are not checked and are supposed to match
+	void *item;
+	int isComplex, ii;
+	double *inData, *inImgData;
+	npy_cdouble *valImag;
+	npy_intp *coords;
+
+	isComplex = mxIsComplex(inArray);
+	inData = mxGetPr(inArray);
+
+	coords = (npy_intp*)PyMem_Malloc(sizeof(npy_intp) * PyArray_NDIM(outArray));
+	for(ii = 0; ii < PyArray_NDIM(outArray); ii++){
+		coords[ii] = 0;
+	}
+
+	if(isComplex){
+		inImgData = mxGetPi(inArray);
+	}
+	else
+	{
+		inImgData = NULL;
+	}
+
+	do
+	{
+		item = PyArray_GetPtr(outArray, coords);
+		assert(item);
+		if(isComplex)
+		{
+			valImag = (npy_cdouble*)item;
+			valImag->real = (npy_double)(*inData++);
+			valImag->imag = (npy_double)(*inImgData++);
+		}
+		else
+		{
+			*((npy_double*)item) = (npy_double)(*inData++);
+		}
+	}while(go_next_coord(coords, outArray));
+
+	PyMem_Free(coords);
+}
 
 PyObject* mx2numeric(const mxArray *pArray)
 {
-    int nd;
-    const int *dims;
-    int lMyDim;
-    PyArrayObject *lRetval = 0;
-    int lRows, lCols;
-    const double *lPR;
-    const double *lPI;
+    int number_of_matlab_dimensions;
+	const int *matlab_dimensions;
+
+	int			number_of_python_dimensions;
+	npy_intp	*python_dimensions;
+	PyArrayObject* lRetval;
+	
+	int ii;
 
 	if(!pyarray_works()){
 		return raise_pymat_error(
 			PYMAT_ERR_NUMPY, "Unable to perform this function without NumPy installed");
 	}
 
-    nd = mxGetNumberOfDimensions(pArray);
-    if (nd > 2) {
-        return not_implemented_msg(
-			"Only 1-D and 2-D arrays are currently supported");
-    }
+	assert(mxIsDouble(pArray));
 
-    dims = (const int*)mxGetDimensions(pArray);
+	// mxGetNumberOfDimensions always returns '2' or more
+    number_of_matlab_dimensions = mxGetNumberOfDimensions(pArray);
+    matlab_dimensions = mxGetDimensions(pArray);
 
-    if (nd == 2 && (dims[0] == 1 || dims[1] == 1)) {
-        // It's really 1-D
-        lMyDim = max(dims[0], dims[1]);
-        dims = & lMyDim;
-        nd=1;
-    }
+
+	number_of_python_dimensions = number_of_matlab_dimensions;
+	python_dimensions = (npy_intp*)PyMem_Malloc(sizeof(npy_int) * number_of_python_dimensions);
+	for(ii=0; ii < number_of_python_dimensions; ii++){
+		python_dimensions[ii] = (npy_int)matlab_dimensions[ii];
+	}
 
     lRetval = (PyArrayObject *)PyArray_SimpleNew(
-		nd, (npy_intp*)dims, 
+		number_of_python_dimensions, python_dimensions, 
         mxIsComplex(pArray) ? PyArray_CDOUBLE : PyArray_DOUBLE
 	);
+	PyMem_Free(python_dimensions);
+
     if (!lRetval) Py_RETURN_NONE;
 
-    lRows = mxGetM(pArray);
-    lCols = mxGetN(pArray);
-    lPR = mxGetPr(pArray);
-    if (mxIsComplex(pArray)) {
-        lPI = mxGetPi(pArray);
-
-        for (int lCol = 0; lCol < lCols; lCol++) {
-            double *lDst = (double *)(lRetval->data) + 2*lCol;
-            for (int lRow = 0; lRow < lRows; lRow++, lDst += 2*lCols) {
-                lDst[0] = *lPR++;
-                lDst[1] = *lPI++;
-            }
-        }
-    } else {
-        for (int lCol = 0; lCol < lCols; lCol++) {
-            double *lDst = (double *)(lRetval->data) + lCol;
-            for (int lRow = 0; lRow < lRows; lRow++, lDst += lCols) {
-                *lDst = *lPR++;
-            }
-        }
-    }
-
+	copy_mx_to_numpy(pArray, lRetval);
     return (PyObject*)lRetval;
 }
