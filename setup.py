@@ -22,9 +22,7 @@ setup(
                 setup_env.MATLAB_INCLUDE_DIR,
                 setup_env.numpy_include,
             ],
-            library_dirs=[
-                setup_env.MATLAB_LIB_DIR,
-            ],
+            library_dirs=setup_env.MATLAB_LIB_DIRS,
             define_macros=[
                 ("DISTUTILS_PYMAT_VERSION", '%s' % setup_env.version),
             ],

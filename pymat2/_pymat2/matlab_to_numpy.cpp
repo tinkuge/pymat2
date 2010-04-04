@@ -92,8 +92,8 @@ void copy_mx_to_numpy(const mxArray *inArray, PyArrayObject* outArray){
 
 PyObject* mx2numeric(const mxArray *pArray)
 {
-    int number_of_matlab_dimensions;
-	const int *matlab_dimensions;
+    	mwSize number_of_matlab_dimensions;
+	const mwSize *matlab_dimensions;
 
 	int			number_of_python_dimensions;
 	npy_intp	*python_dimensions;

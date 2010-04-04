@@ -8,11 +8,16 @@ import os
 
 if os.name == "nt":
     MATLAB_DIR = r"C:\programming\src\external\Matlab"
-    MATLAB_LIB_DIR = os.path.join(MATLAB_DIR, 
-        "extern", "lib", "win32", "microsoft")
+    MATLAB_LIB_DIRS = [
+        os.path.join(MATLAB_DIR, 
+            "extern", "lib", "win32", "microsoft"),
+    ]
 else:
-    MATLAB_DIR = r"/usr/share/matlab"
-    MATLAB_LIB_DIR = os.path.join(MATLAB_DIR, "extern", "lib", "glnxa64")
+    MATLAB_DIR = r"/usr/share/Matlab"
+    MATLAB_LIB_DIRS = [
+        os.path.join(MATLAB_DIR, "extern", "lib", "glnxa64"),
+        os.path.join(MATLAB_DIR, "bin", "glnxa64"),
+    ]
 
 MATLAB_INCLUDE_DIR = os.path.join(MATLAB_DIR, "extern", "include")
 
