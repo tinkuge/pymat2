@@ -12,7 +12,9 @@
 #	error No Numpy array allowed
 #endif
 
-#ifdef WIN32
+#ifdef WINDOWS
+/* For some reason there is no 'mwSize' type in windows version of Matlab */
+typedef int mwSize;
 #include <windows.h>
 #endif
 

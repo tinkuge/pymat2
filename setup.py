@@ -25,7 +25,7 @@ setup(
             library_dirs=setup_env.MATLAB_LIB_DIRS,
             define_macros=[
                 ("DISTUTILS_PYMAT_VERSION", '%s' % setup_env.version),
-            ],
+            ] + setup_env.extra_defines,
             extra_link_args=setup_env.extra_link_args,
         ),
     ],

@@ -188,7 +188,7 @@ static PyObject *Matlab_stop(MatlabObject *self){
 	if(engClose(self->matlab_engine)){
 		return raise_pymat_error(PYMAT_ERR_MATLAB_ENGINE_STOP, "Matlab engine closing error.");
 	}
-#if WIN32
+#ifdef WINDOWS
 	assert(NO_MATLAB_RETURN_STATUS > 0);
 	while(self->matlab_engine_return_status == NO_MATLAB_RETURN_STATUS){
 		/* In Windows "Sleep" has delay parameter measured in msec. */
@@ -211,7 +211,7 @@ static PyObject *Matlab_start(MatlabObject *self){
 
 	   *nix users are out of luck, as usual.
 	 */
-#ifdef WIN32
+#ifdef WINDOWS
 	self->matlab_engine = engOpenSingleUse(
 		self->start_command, NULL, 
 		&(self->matlab_engine_return_status)
@@ -270,7 +270,7 @@ static int Matlab_init(MatlabObject *self, PyObject *args, PyObject *kwds) {
 	self->matlab_engine_output_buffer_len = MATLAB_OUTPUT_BUFFER_LEN;
 	self->matlab_engine_output_buffer = (char*)PyMem_Malloc(MATLAB_OUTPUT_BUFFER_LEN + 1);
 
-#ifdef WIN32
+#ifdef WINDOWS
 	if(startCmdLen){
 		raise_pymat_error(
 			PYMAT_ERR_WRONG_INIT_ARGUMENT, "Constructor arguments not supported on Windows.");

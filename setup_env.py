@@ -7,11 +7,13 @@ import os
 # The following variables are expected to be set by user
 
 if os.name == "nt":
-    MATLAB_DIR = r"C:\programming\src\external\Matlab"
+    MATLAB_DIR = r"C:\programming\_arch\external\Matlab"
     MATLAB_LIB_DIRS = [
         os.path.join(MATLAB_DIR, 
             "extern", "lib", "win32", "microsoft"),
     ]
+elif os.name == "mac":
+    raise NotImplementedError("Please, setup Matlab-related stuff here.")
 else:
     MATLAB_DIR = r"/usr/share/Matlab"
     MATLAB_LIB_DIRS = [
@@ -38,3 +40,8 @@ if os.name == "nt":
     extra_link_args=["libeng.lib", "libmx.lib"]
 else:
     extra_link_args=["-lmx", "-leng"]
+
+if os.name == "nt":
+    extra_defines=[("WINDOWS", "")]
+else:
+    extra_defines=[("NIX", "")]

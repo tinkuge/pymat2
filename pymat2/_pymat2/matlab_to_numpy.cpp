@@ -1,6 +1,5 @@
 #include "matlab_to_numpy.h"
 
-#include "matrix.h"
 #include "exceptions.h"
 
 PyObject* mx2char(const mxArray *pArray)
