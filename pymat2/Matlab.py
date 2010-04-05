@@ -40,39 +40,21 @@ class Matlab(object):
             arg = None
         self._pymatMatlab = _pymat2.Matlab(arg)
 
-    def start(self):
+    def start(self, retryCount=20):
         """Start Matlab instance.
 
         Return 'True' on success.
 
         """
+        _startupErrorCode = _pymat2.PymatErrorCodes["PYMAT_ERR_MATLAB_ENGINE_START"]
         if not self.running:
-            self._pymatMatlab.start()
-        return self.running
-
-    def stop(self):
-        """Stop Matlab.
-
-        Return 'True' on success.
-        """
-        if self.running:
-            self._pymatMatlab.stop()
-        return not self.running
-
-    def restart(self):
-        """Restart Matlab."""
-        # This is a dirty hack, someone should
-        # propose something better
-        _rv = self.stop()
-        if _rv:
-            # Attempt to start Matlab 15 times,
-            # give up afterwards
-            _rv = False
-            for _attempt in xrange(15):
+            for _attempt in xrange(retryCount):
+                # This is a dirty hack, someone should
+                # propose something better
                 try:
-                    _rv = self.start()
+                    self._pymatMatlab.start()
                 except _pymat2.PymatError, _err:
-                    if _err[0] == _pymat2.PymatErrorCodes["PYMAT_ERR_MATLAB_ENGINE_START"]:
+                    if _err[0] == _startupErrorCode:
                         # Engine start failure - suppress it
                         # and probably attempt to start it after
                         # some delay
@@ -86,11 +68,23 @@ class Matlab(object):
             else:
                 # "for" loop didn't end with "break" call
                 # engine startup failed for sure.
-                raise exceptions.MatlabStartupError(
-                    "All attempts to bring engine back failed.")
-        return _rv
+                raise exceptions.MatlabStartupError("All attempts to start engoine failed.")
+        return self.running
 
-    def eval(self, cmd):
+    def stop(self):
+        """Stop Matlab.
+
+        Return 'True' on success.
+        """
+        if self.running:
+            self._pymatMatlab.stop()
+        return not self.running
+
+    def restart(self):
+        """Restart Matlab."""
+        return self.stop() and self.start()
+
+    def _eval(self, cmd):
         """Do a plain eval of given string in matlab.
 
         Does not perform fancy result parsing, etc.
@@ -100,6 +94,14 @@ class Matlab(object):
             raise exceptions.MatlabBackendStateError(
                 "Matlab process not started")
         return self._pymatMatlab.eval(cmd)
+
+    def eval(self, cmd):
+        _rv = self._eval(cmd)
+        if _rv.startswith(">>"):
+            # matlab return on *nix starts with theese '>>'
+            # removing them to make output truly cross-platrofm
+            _rv = _rv.lstrip('>')
+        return _rv.lstrip()
 
     def _parseMatlabOutput(self, value, mapType):
         # Please note that parsing is quite simple.
@@ -113,7 +115,7 @@ class Matlab(object):
             _out = mapType(_lines[0][0])
         return _out
 
-    _returnValueRe = re.compile(r"^(?:>>\s*)?\s*(\w+)\s*=\s*((?:[0-9.eE+-]+\s*)+)", re.M)
+    _returnValueRe = re.compile(r"^(\w+)\s*=\s*((?:[0-9.eE+-]+\s*)+)", re.M)
     def evalAndParse(self, msg):
         """Eval given string and parse result.
 

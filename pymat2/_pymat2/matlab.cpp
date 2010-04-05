@@ -13,19 +13,10 @@ Takes single argument (named 'startCmd') on *nix operationg systems,\n\
 Does not take any arguments on Windows.\n\
 ");
 
-/* 
-   Dummy return status to be set in 'matlab return status'
-   structure when engine is started.
-
-   Actual value of constant determined by fair "random.randint(0, 2048)"
-   call in Python interpreter.
-*/
-#define NO_MATLAB_RETURN_STATUS		1946
 typedef struct {
 	PyObject_HEAD;
 	char *start_command;
 	Engine *matlab_engine;
-	int matlab_engine_return_status;
 
 	char *matlab_engine_output_buffer;
 	int matlab_engine_output_buffer_len;
@@ -161,7 +152,6 @@ static PyObject *Matlab_set_output_buffer_size(MatlabObject *self, PyObject *arg
 	
 	_MATLAB_MUST_BE_RUNNING;
 
-	rc = PyArg_ParseTuple(args, "i", &desired_size);
 	if(!rc || desired_size < 0){
 		return raise_pymat_error(PYMAT_ERR_FUNCTION_ARGS, "Failed to parse buffer size.");
 	};
@@ -182,19 +172,12 @@ static PyObject *Matlab_set_output_buffer_size(MatlabObject *self, PyObject *arg
 }
 
 PyDoc_STRVAR(Matlab_stop_doc, 
-"Start Matlab engine process.");
+"Stop Matlab engine process.");
 static PyObject *Matlab_stop(MatlabObject *self){
 	_MATLAB_MUST_BE_RUNNING;
 	if(engClose(self->matlab_engine)){
 		return raise_pymat_error(PYMAT_ERR_MATLAB_ENGINE_STOP, "Matlab engine closing error.");
 	}
-#ifdef WINDOWS
-	assert(NO_MATLAB_RETURN_STATUS > 0);
-	while(self->matlab_engine_return_status == NO_MATLAB_RETURN_STATUS){
-		/* In Windows "Sleep" has delay parameter measured in msec. */
-		Sleep(100);
-	}
-#endif
 	self->matlab_engine = NULL;
 	Py_RETURN_NONE;
 }
@@ -211,15 +194,7 @@ static PyObject *Matlab_start(MatlabObject *self){
 
 	   *nix users are out of luck, as usual.
 	 */
-#ifdef WINDOWS
-	self->matlab_engine = engOpenSingleUse(
-		self->start_command, NULL, 
-		&(self->matlab_engine_return_status)
-	);
-	self->matlab_engine_return_status = NO_MATLAB_RETURN_STATUS;
-#else
 	self->matlab_engine = engOpen(self->start_command);
-#endif
 	if(!self->matlab_engine){
 		return raise_pymat_error(PYMAT_ERR_MATLAB_ENGINE_START, "Failed to start Matlab Engine");
 	}
@@ -305,8 +280,6 @@ static PyMemberDef Matlab_members[] = {
 		RO, (char*)"Start command used to start given Matlab instance"},
 	{(char*)"outputBufferSize", T_INT, offsetof(MatlabObject, matlab_engine_output_buffer_len),
 		RO, (char*)"Currently set output buffer size"},
-	{(char*)"engineReturnStatus", T_INT, offsetof(MatlabObject, matlab_engine_return_status),
-		RO, (char*)"Matlab object return status."},
 	{NULL}
 };
 
