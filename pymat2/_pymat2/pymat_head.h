@@ -14,7 +14,7 @@
 
 #ifdef WINDOWS
 /* For some reason there is no 'mwSize' type in windows version of Matlab */
-typedef int mwSize;
+typedef size_t mwSize;
 #include <windows.h>
 #endif
 
@@ -48,10 +48,10 @@ typedef int mwSize;
 #endif
 
 
-/* 
+/*
 * I know that it is evil, but it is simpliest of all hacks
 * I can think of now.
-* 
+*
 * If you have any proposals on how to remove this thing,
 * notify me please.
 */

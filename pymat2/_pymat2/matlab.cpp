@@ -43,7 +43,7 @@ char-valued array.\n\
 ");
 PyObject* Matlab_put_array(MatlabObject *self, PyObject *args){
 	char *lName;
- 
+
     PyObject *lSource;
     mxArray *lArray = NULL;
 
@@ -94,7 +94,7 @@ MATLAB array.\n\
 PyObject * Matlab_get_array(MatlabObject *self, PyObject *args){
    char *lName;
 
- 
+
    mxArray *lArray = 0;
    PyObject *rv = NULL;
 
@@ -107,7 +107,7 @@ PyObject * Matlab_get_array(MatlabObject *self, PyObject *args){
    lArray = engGetVariable(self->matlab_engine, lName);
    if (!lArray) {
       return raise_pymat_error(PYMAT_ERR_GET_ERROR, "Unable to get matrix from MATLAB workspace");
-   }	
+   }
 
    if (mxIsChar(lArray)) {
       rv = (PyObject *)mx2char(lArray);
@@ -126,7 +126,7 @@ PyObject * Matlab_get_array(MatlabObject *self, PyObject *args){
 static PyObject *Matlab_eval(MatlabObject *self, PyObject *args, PyObject *kwds){
 	char *command=NULL;
 	int rc, eval_rc;
-	
+
 	_MATLAB_MUST_BE_RUNNING;
 
 	rc = PyArg_ParseTuple(args, "z", &command);
@@ -145,13 +145,14 @@ static PyObject *Matlab_eval(MatlabObject *self, PyObject *args, PyObject *kwds)
 	}
 }
 
-PyDoc_STRVAR(Matlab_set_output_buffer_size_doc, 
+PyDoc_STRVAR(Matlab_set_output_buffer_size_doc,
 	"Set matlab output buffer size. (0 to turn off, " STR(MATLAB_OUTPUT_BUFFER_LEN) " by default)");
 static PyObject *Matlab_set_output_buffer_size(MatlabObject *self, PyObject *args, PyObject *kwds){
 	int desired_size=0, rc;
-	
+
 	_MATLAB_MUST_BE_RUNNING;
 
+	rc = PyArg_ParseTuple(args, "i", &desired_size);
 	if(!rc || desired_size < 0){
 		return raise_pymat_error(PYMAT_ERR_FUNCTION_ARGS, "Failed to parse buffer size.");
 	};
@@ -166,12 +167,12 @@ static PyObject *Matlab_set_output_buffer_size(MatlabObject *self, PyObject *arg
 	}else{
 		self->matlab_engine_output_buffer = NULL;
 	}
-	engOutputBuffer(self->matlab_engine, 
+	engOutputBuffer(self->matlab_engine,
 		self->matlab_engine_output_buffer, self->matlab_engine_output_buffer_len);
 	Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(Matlab_stop_doc, 
+PyDoc_STRVAR(Matlab_stop_doc,
 "Stop Matlab engine process.");
 static PyObject *Matlab_stop(MatlabObject *self){
 	_MATLAB_MUST_BE_RUNNING;
@@ -182,13 +183,13 @@ static PyObject *Matlab_stop(MatlabObject *self){
 	Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(Matlab_start_doc, 
+PyDoc_STRVAR(Matlab_start_doc,
 "Start Matlab engine process.");
 static PyObject *Matlab_start(MatlabObject *self){
 	if(self->matlab_engine){
 		return raise_pymat_error(PYMAT_ERR_MATLAB_ENGINE_STARTED, "Matlab engine is already started.");
 	}
-	/* 
+	/*
 	   Creating separate MATLAB instance for each process
 	   is safer.
 
@@ -200,13 +201,13 @@ static PyObject *Matlab_start(MatlabObject *self){
 	}
 	// Engine started, register output buffer.
 	if(self->matlab_engine_output_buffer){
-		engOutputBuffer(self->matlab_engine, 
+		engOutputBuffer(self->matlab_engine,
 			self->matlab_engine_output_buffer, self->matlab_engine_output_buffer_len);
 	}
 	Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(Matlab_is_running_doc, 
+PyDoc_STRVAR(Matlab_is_running_doc,
 "Return true if matlab instance is instantiated.");
 static PyObject *Matlab_is_running(MatlabObject *self){
 	if(self->matlab_engine){
@@ -238,7 +239,7 @@ static int Matlab_init(MatlabObject *self, PyObject *args, PyObject *kwds) {
 
 	rc = PyArg_ParseTupleAndKeywords(args, kwds, "|z#:startCmd", kwlist, &startCmd, &startCmdLen);
 	if(!rc){ return -1; };
-	
+
 	self->start_command = NULL;
 	self->matlab_engine = NULL;
 
@@ -250,13 +251,13 @@ static int Matlab_init(MatlabObject *self, PyObject *args, PyObject *kwds) {
 		raise_pymat_error(
 			PYMAT_ERR_WRONG_INIT_ARGUMENT, "Constructor arguments not supported on Windows.");
 		return -1;
-	}	
+	}
 #else
 	if(startCmd && startCmdLen){
 		self->start_command = (char*)PyMem_Malloc(startCmdLen + 1);
 		strncpy(self->start_command, startCmd, startCmdLen+1);
 	}
-#endif	
+#endif
 
 	return 0;
 }
@@ -266,7 +267,7 @@ static PyMethodDef Matlab_methods[] = {
 	{"stop", (PyCFunction)Matlab_stop, METH_NOARGS, Matlab_stop_doc},
 
 	{"eval", (PyCFunction)Matlab_eval, METH_VARARGS, "Eval string in Matlab"},
-	{"setOutputBufferSize", 
+	{"setOutputBufferSize",
 		(PyCFunction)Matlab_set_output_buffer_size, METH_VARARGS, Matlab_set_output_buffer_size_doc},
 	{"getArray", (PyCFunction)Matlab_get_array, METH_VARARGS, Matlab_get_array_doc},
 	{"putArray", (PyCFunction)Matlab_put_array, METH_VARARGS, Matlab_put_array_doc},
@@ -276,7 +277,7 @@ static PyMethodDef Matlab_methods[] = {
 };
 
 static PyMemberDef Matlab_members[] = {
-	{(char*)"startCommand", T_STRING, offsetof(MatlabObject, start_command), 
+	{(char*)"startCommand", T_STRING, offsetof(MatlabObject, start_command),
 		RO, (char*)"Start command used to start given Matlab instance"},
 	{(char*)"outputBufferSize", T_INT, offsetof(MatlabObject, matlab_engine_output_buffer_len),
 		RO, (char*)"Currently set output buffer size"},
@@ -305,10 +306,10 @@ static PyTypeObject MatlabType = {
     0, /* tp_getattro */
     0, /* tp_setattro */
     0, /* *tp_as_buffer */
-	
+
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
 	MatlabObject_doc, /* tp_doc */
-	
+
 	0, /* tp_traverse */
     0, /* tp_clear */
 	0, /* tp_richcompare */
@@ -318,7 +319,7 @@ static PyTypeObject MatlabType = {
 
 	Matlab_methods, /* tp_methods */
 	Matlab_members, /* tp_members */
-	
+
 	0, /* *tp_getset */
     0, /* *tp_base */
     0, /* *tp_dict */

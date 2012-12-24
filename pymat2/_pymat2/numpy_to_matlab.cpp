@@ -9,11 +9,10 @@
 #endif
 
 template <class T>
-void copyNumeric2Mx(T *pSrc, int pRows, int pCols,
-	double *pDst, STRIDES_TYPE *pStrides)
+void copyNumeric2Mx(T *pSrc, int pRows, int pCols, double *pDst, npy_intp * const pStrides)
 {
-    int lRowDelta = pStrides[1]/sizeof(T);
-    int lColDelta = pStrides[0]/sizeof(T);
+    const size_t lRowDelta = pStrides[1]/sizeof(T);
+    const size_t lColDelta = pStrides[0]/sizeof(T);
 
     for (int lCol=0; lCol < pCols; lCol++) {
         T *lSrc = pSrc + lCol*lRowDelta;
@@ -26,8 +25,8 @@ void copyNumeric2Mx(T *pSrc, int pRows, int pCols,
 template <class T>
 void copyCplxNumeric2Mx(T *pSrc, int pRows, int pCols, double *pRData, double *pIData, npy_intp *pStrides)
 {
-    int lRowDelta = pStrides[1]/sizeof(T);
-    int lColDelta = pStrides[0]/sizeof(T);
+    const size_t lRowDelta = pStrides[1]/sizeof(T);
+    const size_t lColDelta = pStrides[0]/sizeof(T);
 
     for (int lCol=0; lCol < pCols; lCol++) {
         T *lSrc = pSrc + lCol*lRowDelta;
@@ -46,7 +45,7 @@ static mxArray *makeMxFromNumeric(const PyArrayObject *pSrc)
     double *lI = 0;
     mxArray *lRetval = 0;
 
-	if(pSrc->nd > 2){
+	if(pSrc->nd > 2 || pSrc->nd < 1){
 		not_implemented_msg("Only 1-D and 2-D arrays are currently supported");
 		return NULL;
 	}
@@ -62,16 +61,16 @@ static mxArray *makeMxFromNumeric(const PyArrayObject *pSrc)
     case PyArray_OBJECT:
         raise_pymat_error(PYMAT_ERR_NUMPY, "Non-numeric array types not supported");
         return NULL;
-        
+
     case PyArray_CFLOAT:
     case PyArray_CDOUBLE:
         lIsComplex = true;
         break;
-        
+
     default:
         lIsComplex = false;
     }
-    
+
     lRetval = mxCreateDoubleMatrix(lRows, lCols, lIsComplex ? mxCOMPLEX : mxREAL);
 
 	if (!lRetval) {
@@ -94,7 +93,7 @@ static mxArray *makeMxFromNumeric(const PyArrayObject *pSrc)
         copyNumeric2Mx((signed char *)(pSrc->data), lRows, lCols, lR, pSrc->strides);
         break;
 
-    case PyArray_SHORT: 
+    case PyArray_SHORT:
         copyNumeric2Mx((short *)(pSrc->data), lRows, lCols, lR, pSrc->strides);
         break;
 
@@ -176,7 +175,7 @@ mxArray* numeric2mx(const PyObject *pSrc)
 
 	if(!pyarray_works()){
 		raise_pymat_error(
-			PYMAT_ERR_NUMPY, 
+			PYMAT_ERR_NUMPY,
 			"Unable to perform this function without NumPy installed"
 		);
 		return NULL;

@@ -27,6 +27,7 @@ setup(
                 ("DISTUTILS_PYMAT_VERSION", '%s' % setup_env.version),
             ] + setup_env.extra_defines,
             extra_link_args=setup_env.extra_link_args,
+            extra_compile_args=setup_env.extra_compile_args,
         ),
     ],
 )

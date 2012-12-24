@@ -4,11 +4,10 @@
 
 PyObject* mx2char(const mxArray *pArray)
 {
-    int buflen;
+    const size_t buflen = mxGetM(pArray)*mxGetN(pArray) + 1;
     char *buf;
     PyObject *lRetval;
 
-    buflen = mxGetM(pArray)*mxGetN(pArray) + 1;
     buf = (char *)mxCalloc(buflen, sizeof(char));
 	if(!buf){
 		return raise_pymat_error(
@@ -94,10 +93,10 @@ PyObject* mx2numeric(const mxArray *pArray)
     	mwSize number_of_matlab_dimensions;
 	const mwSize *matlab_dimensions;
 
-	int			number_of_python_dimensions;
+	size_t		number_of_python_dimensions;
 	npy_intp	*python_dimensions;
 	PyArrayObject* lRetval;
-	
+
 	int ii;
 
 	if(!pyarray_works()){
@@ -119,7 +118,7 @@ PyObject* mx2numeric(const mxArray *pArray)
 	}
 
     lRetval = (PyArrayObject *)PyArray_SimpleNew(
-		number_of_python_dimensions, python_dimensions, 
+		number_of_python_dimensions, python_dimensions,
         mxIsComplex(pArray) ? PyArray_CDOUBLE : PyArray_DOUBLE
 	);
 	PyMem_Free(python_dimensions);
