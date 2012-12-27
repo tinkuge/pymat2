@@ -5,12 +5,12 @@ import glob
 import os
 import platform
 
-is_64_bit_os = platform.machine().endswith('64')
+is_64_bit_os = "64 bit" in platform.python_compiler()
 # The following variables are expected to be set by user
 
 
 if os.name == "nt":
-    MATLAB_DIR = r"C:\Program Files\MATLAB\R2009b"
+    MATLAB_DIR = r"C:\Program Files (x86)\MATLAB\R2009b"
     lib_dir =os.path.join(MATLAB_DIR, "extern", "lib")
 
     if is_64_bit_os:
